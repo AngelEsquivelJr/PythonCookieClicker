@@ -14,13 +14,15 @@ window.register_shape("C:\\Users\\aesqu\\OneDrive\\Desktop\\Python\\Random Fun\\
 cookie = turtle.Turtle()
 cookie.shape("C:\\Users\\aesqu\\OneDrive\\Desktop\\Python\\Random Fun\\CookieClicker\\cookieIMG.gif")
 
-# var to hold click multiplier and clicks
+# var to hold click multiplier clicks and upgrade check amount
 clickXAmt = 1
 clicks = 0
+upgradeCheck = 100
+
 
 # class to setup buttons
 class Button(turtle.Turtle):
-    def __init__(self,screen, text, x, y, w, h, color, i, penSize, a=None):
+    def __init__(self,screen, text, x, y, w, h, color, i, penSize):
         turtle.Turtle.__init__(self)
         self.msg = text
         self.x = x
@@ -29,12 +31,11 @@ class Button(turtle.Turtle):
         self.width = w
         self.height = h
         self.colour = color
-        self.action = a
         self.screen = screen
         self.i_color = i
         self.screen.tracer(0)
         self.ht() 
-        self.color(self.colour)
+        self.color(self.colour)        
         self.penup()
         self.begin_fill()
         self.goto(self.x, self.y)
@@ -56,30 +57,42 @@ pen.hideturtle()
 pen.color("white")
 pen.penup()
 pen.goto(0, 300)
-pen.write(f"Cookies: {clicks}", align="center", font=("Courier New", 32, "normal"))
-pen2 = turtle.Turtle()
-pen2.hideturtle()
-pen2.color("white")
-pen2.penup()
-pen2.goto(330, 350)
-pen2.write(f"Click Multiplier: x{clickXAmt}", align="center", font=("Courier New", 15, "normal"))
+pen.write(f"Cookies: {clicks}", align="center", font=("Courier New", 28, "normal"))
+penMulti = turtle.Turtle()
+penMulti.hideturtle()
+penMulti.color("white")
+penMulti.penup()
+penMulti.goto(330, 350)
+penMulti.write(f"Click Multiplier: x{clickXAmt}", align="center", font=("Courier New", 15, "normal"))
+penUpgrade = turtle.Turtle()
+penUpgrade.hideturtle()
+penUpgrade.color("red")
+penUpgrade.penup()
+penUpgrade.goto(0, -250)
+button = Button(window, "Upgrade Click", -65, -300, 150, 50, "white", "#8470ff", 15)
 
 # function for button
 def UpgradeOne(x, y):
     if x > -65 and x < 85 and y > -300 and y < -250:
-        global clickXAmt
-        clickXAmt += 1
-        pen2.clear()
-        pen2.write(f"Click Multiplier: x{clickXAmt}", align="center", font=("Courier New", 15, "normal"))       
-
-button = Button(window, "Upgrade Click", -65, -300, 150, 50, "white", "#8470ff", 15, UpgradeOne)
-
+        global clickXAmt, upgradeCheck, clicks
+        if clicks >= upgradeCheck:
+            clickXAmt += 1
+            clicks -= upgradeCheck
+            upgradeCheck += 50
+            pen.clear()
+            pen.write(f"Clicks: {clicks}", align="center", font=("Courier New", 28, "normal"))          
+            penMulti.clear()
+            penMulti.write(f"Click Multiplier: x{clickXAmt}", align="center", font=("Courier New", 15, "normal"))
+        else:                        
+            penUpgrade.write(f"Upgrade costs: {upgradeCheck} clicks", align="center", font=("Courier New", 15, "normal"))
+        
 # function to increment clicks and add to screen
 def clicked(x, y):
     global clicks
     clicks += clickXAmt
     pen.clear()
-    pen.write(f"Clicks: {clicks}", align="center", font=("Courier New", 32, "normal"))
+    penUpgrade.clear()
+    pen.write(f"Clicks: {clicks}", align="center", font=("Courier New", 28, "normal"))
 
 # call function on click
 cookie.onclick(clicked)
